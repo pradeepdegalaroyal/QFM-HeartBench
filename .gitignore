@@ -1,0 +1,23 @@
+# environments
+env/
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+# raw run artefacts (large); curated outputs go to results/
+runs/
+monitor/
+# local archive (not part of the package)
+archive/
+# OS / editor
+.DS_Store
+Thumbs.db
+.ipynb_checkpoints/
+runs_mirror/
+results/*
+!results/tables/
+# local helper scripts with cluster credentials
+scripts/windows/
+# internal report generator (local only)
+analysis/write_results_md.py

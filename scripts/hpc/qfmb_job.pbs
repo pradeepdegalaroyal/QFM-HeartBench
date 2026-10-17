@@ -1,0 +1,38 @@
+#!/bin/bash
+# PBS job for QFM-HeartBench. Every job pulls tasks from the same shared queue
+# (runs/locks), so any number of jobs can run at once on any nodes, and a
+# killed job loses nothing that has already finished.
+#
+# Submit through scripts/hpc/submit.sh (sets SUITES / SELECT / WORKERS), e.g.
+#   qsub -q long -l select=1:ncpus=8:mem=32gb -v SUITES=main,SELECT=small,WORKERS=8 scripts/hpc/qfmb_job.pbs
+#PBS -N qfmb
+#PBS -l walltime=480:00:00
+#PBS -j oe
+
+ROOT=${QFMB_ROOT:-${PBS_O_WORKDIR:-$HOME/QFM-HeartBench}}
+cd "$ROOT" || exit 1
+mkdir -p runs/pbs_logs
+LOG="runs/pbs_logs/${PBS_JOBID:-manual}.log"
+exec >> "$LOG" 2>&1
+
+export PATH=/opt/pbs/bin:$PATH
+export PYTHONPATH="$ROOT/src"
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONHASHSEED=0 PYTHONUNBUFFERED=1
+PY="$ROOT/env/bin/python"
+SUITES=${SUITES:-main}
+SELECT=${SELECT:-small}
+WORKERS=${WORKERS:-${NCPUS:-4}}
+HOURS=${HOURS:-$(( ${WALLTIME_HOURS:-480} - 12 ))}
+
+echo "=== job ${PBS_JOBID} on $(hostname) at $(date) suites=$SUITES select=$SELECT workers=$WORKERS queue=${PBS_QUEUE}"
+"$PY" -m qfmb.cli work --suites "$SUITES" --select "$SELECT" --workers "$WORKERS" --hours "$HOURS" --wait
+echo "=== workers exited at $(date)"
+"$PY" -m qfmb.cli dashboard
+
+# Self-continuation: if work is still pending (e.g. walltime reached), resubmit
+# an identical job so the experiment completes without anyone logging in.
+if "$PY" -m qfmb.cli pending --suites "$SUITES" --select "$SELECT"; then
+  NEXT=$(bash "$ROOT/scripts/hpc/submit.sh" "${PBS_QUEUE:-long}" "${NCPUS:-4}" "${QFMB_MEM:-32gb}" \
+         "$SUITES" "$SELECT" "$WORKERS")
+  echo "=== work pending -> resubmitted as $NEXT"
+fi

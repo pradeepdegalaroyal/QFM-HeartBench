@@ -1,0 +1,139 @@
+dataset,label,hp_bandwidth,count
+chd,QGPC-Angle Encoding,0.05,38
+chd,QGPC-Angle Encoding,0.1,62
+chd,QGPC-Hadamard,1.0,100
+chd,QGPC-Pauli-Z,0.05,11
+chd,QGPC-Pauli-Z,0.1,89
+chd,QGPC-RX,0.05,80
+chd,QGPC-RX,0.1,20
+chd,QGPC-Strongly Entangling,0.05,91
+chd,QGPC-Strongly Entangling,0.1,9
+chd,QGPC-VQE,0.05,100
+chd,QSVM-Angle Encoding,0.05,37
+chd,QSVM-Angle Encoding,0.1,45
+chd,QSVM-Angle Encoding,0.25,17
+chd,QSVM-Angle Encoding,0.5,1
+chd,QSVM-Hadamard,0.5,36
+chd,QSVM-Hadamard,1.0,58
+chd,QSVM-Hadamard,2.0,6
+chd,QSVM-Pauli-Z,0.05,41
+chd,QSVM-Pauli-Z,0.1,45
+chd,QSVM-Pauli-Z,0.25,9
+chd,QSVM-Pauli-Z,0.5,5
+chd,QSVM-RX,0.05,34
+chd,QSVM-RX,0.1,45
+chd,QSVM-RX,0.25,17
+chd,QSVM-RX,0.5,4
+chd,QSVM-Strongly Entangling,0.05,46
+chd,QSVM-Strongly Entangling,0.1,44
+chd,QSVM-Strongly Entangling,0.25,10
+chd,QSVM-VQE,0.05,95
+chd,QSVM-VQE,0.1,5
+chd,VQC-Angle Encoding,0.1,4
+chd,VQC-Angle Encoding,0.25,85
+chd,VQC-Angle Encoding,0.5,11
+chd,VQC-Hadamard,0.25,1
+chd,VQC-Hadamard,1.0,85
+chd,VQC-Hadamard,2.0,14
+chd,VQC-Pauli-Z,0.1,2
+chd,VQC-Pauli-Z,0.25,39
+chd,VQC-Pauli-Z,0.5,59
+chd,VQC-RX,0.5,51
+chd,VQC-RX,1.0,46
+chd,VQC-RX,2.0,3
+chd,VQC-Strongly Entangling,0.1,6
+chd,VQC-Strongly Entangling,0.25,63
+chd,VQC-Strongly Entangling,0.5,29
+chd,VQC-Strongly Entangling,1.0,2
+chd,VQC-VQE,0.05,47
+chd,VQC-VQE,0.1,53
+cvd,QGPC-Angle Encoding,0.1,7
+cvd,QGPC-Angle Encoding,0.25,3
+cvd,QGPC-Hadamard,0.5,10
+cvd,QGPC-Pauli-Z,0.1,1
+cvd,QGPC-Pauli-Z,0.25,9
+cvd,QGPC-RX,0.1,2
+cvd,QGPC-RX,0.25,8
+cvd,QGPC-Strongly Entangling,0.1,6
+cvd,QGPC-Strongly Entangling,0.25,4
+cvd,QGPC-VQE,0.05,10
+cvd,QSVM-Angle Encoding,0.05,3
+cvd,QSVM-Angle Encoding,0.1,3
+cvd,QSVM-Angle Encoding,0.25,4
+cvd,QSVM-Hadamard,0.05,1
+cvd,QSVM-Hadamard,0.1,3
+cvd,QSVM-Hadamard,0.25,2
+cvd,QSVM-Hadamard,0.5,3
+cvd,QSVM-Hadamard,1.0,1
+cvd,QSVM-Pauli-Z,0.05,3
+cvd,QSVM-Pauli-Z,0.1,5
+cvd,QSVM-Pauli-Z,0.25,2
+cvd,QSVM-RX,0.05,3
+cvd,QSVM-RX,0.1,3
+cvd,QSVM-RX,0.25,3
+cvd,QSVM-RX,0.5,1
+cvd,QSVM-Strongly Entangling,0.05,6
+cvd,QSVM-Strongly Entangling,0.1,3
+cvd,QSVM-Strongly Entangling,0.25,1
+cvd,QSVM-VQE,0.05,9
+cvd,QSVM-VQE,0.1,1
+cvd,VQC-Angle Encoding,0.1,3
+cvd,VQC-Angle Encoding,0.25,6
+cvd,VQC-Angle Encoding,0.5,1
+cvd,VQC-Hadamard,0.25,1
+cvd,VQC-Hadamard,0.5,4
+cvd,VQC-Hadamard,1.0,5
+cvd,VQC-Pauli-Z,0.25,6
+cvd,VQC-Pauli-Z,0.5,4
+cvd,VQC-RX,1.0,10
+cvd,VQC-Strongly Entangling,0.1,1
+cvd,VQC-Strongly Entangling,0.25,3
+cvd,VQC-Strongly Entangling,0.5,1
+cvd,VQC-Strongly Entangling,1.0,5
+cvd,VQC-VQE,0.05,10
+hdc_ext,QGPC-Angle Encoding,0.1,64
+hdc_ext,QGPC-Angle Encoding,0.25,36
+hdc_ext,QGPC-Hadamard,0.5,2
+hdc_ext,QGPC-Hadamard,1.0,98
+hdc_ext,QGPC-Pauli-Z,0.1,36
+hdc_ext,QGPC-Pauli-Z,0.25,64
+hdc_ext,QGPC-RX,0.05,1
+hdc_ext,QGPC-RX,0.1,83
+hdc_ext,QGPC-RX,0.25,16
+hdc_ext,QGPC-Strongly Entangling,0.05,1
+hdc_ext,QGPC-Strongly Entangling,0.1,97
+hdc_ext,QGPC-Strongly Entangling,0.25,2
+hdc_ext,QGPC-VQE,0.05,100
+hdc_ext,QSVM-Angle Encoding,0.05,33
+hdc_ext,QSVM-Angle Encoding,0.1,35
+hdc_ext,QSVM-Angle Encoding,0.25,27
+hdc_ext,QSVM-Angle Encoding,0.5,5
+hdc_ext,QSVM-Hadamard,0.5,43
+hdc_ext,QSVM-Hadamard,1.0,57
+hdc_ext,QSVM-Pauli-Z,0.05,32
+hdc_ext,QSVM-Pauli-Z,0.1,49
+hdc_ext,QSVM-Pauli-Z,0.25,15
+hdc_ext,QSVM-Pauli-Z,0.5,4
+hdc_ext,QSVM-RX,0.05,33
+hdc_ext,QSVM-RX,0.1,33
+hdc_ext,QSVM-RX,0.25,24
+hdc_ext,QSVM-RX,0.5,10
+hdc_ext,QSVM-Strongly Entangling,0.05,33
+hdc_ext,QSVM-Strongly Entangling,0.1,38
+hdc_ext,QSVM-Strongly Entangling,0.25,14
+hdc_ext,QSVM-Strongly Entangling,0.5,15
+hdc_ext,QSVM-VQE,0.05,96
+hdc_ext,QSVM-VQE,0.1,4
+hdc_ext,VQC-Angle Encoding,0.25,67
+hdc_ext,VQC-Angle Encoding,0.5,33
+hdc_ext,VQC-Hadamard,1.0,99
+hdc_ext,VQC-Hadamard,2.0,1
+hdc_ext,VQC-Pauli-Z,0.25,24
+hdc_ext,VQC-Pauli-Z,0.5,76
+hdc_ext,VQC-RX,1.0,51
+hdc_ext,VQC-RX,2.0,49
+hdc_ext,VQC-Strongly Entangling,0.25,47
+hdc_ext,VQC-Strongly Entangling,0.5,52
+hdc_ext,VQC-Strongly Entangling,1.0,1
+hdc_ext,VQC-VQE,0.05,89
+hdc_ext,VQC-VQE,0.1,11
