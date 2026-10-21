@@ -14,10 +14,10 @@ archive/
 .DS_Store
 Thumbs.db
 .ipynb_checkpoints/
-runs_mirror/
 results/*
 !results/tables/
-# local helper scripts with cluster credentials
+!results/key_numbers.json
+# machine-specific local files
+runs_mirror/
 scripts/windows/
-# internal report generator (local only)
 analysis/write_results_md.py

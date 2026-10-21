@@ -1,7 +1,7 @@
 """Load finished task results into tidy pandas tables.
 
-``RUNS`` defaults to ``runs_mirror`` (local copy, see scripts/windows/pull_results.ps1)
-and falls back to ``runs``; override with the QFMB_RUNS environment variable.
+``RUNS`` is the ``runs/`` folder written by ``qfmb work``; set the QFMB_RUNS
+environment variable to read results from another location.
 """
 from __future__ import annotations
 
@@ -14,9 +14,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-RUNS = os.environ.get("QFMB_RUNS") or next(
-    (p for p in (os.path.join(ROOT, "runs_mirror"), os.path.join(ROOT, "runs")) if os.path.isdir(p)),
-    os.path.join(ROOT, "runs"))
+RUNS = os.environ.get("QFMB_RUNS") or os.path.join(ROOT, "runs")
 OUT = os.path.join(ROOT, "results")
 
 QUANTUM_PREFIX = ("QSVM-", "VQC-", "QGPC-")

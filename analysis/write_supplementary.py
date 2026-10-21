@@ -6,11 +6,11 @@ import json
 import os
 import sys
 
+import numpy as np
 import pandas as pd
 
 RES, MS = sys.argv[1], sys.argv[2]
 T = os.path.join(RES, "tables")
-K = json.load(open(os.path.join(RES, "key_numbers.json")))
 P = "balanced_accuracy"
 DS = {"chd": "CHD", "hdc_ext": "HDC-ext", "cvd": "CVD", "hdc_dedup": "HDC (918)"}
 
@@ -147,15 +147,30 @@ for lab in sorted(mode.label.unique()):
     out.append(f"{esc(lab)} & " + " & ".join(cells) + r" \\")
 out.append(r"\bottomrule" + "\n" + r"\end{longtable}}")
 
-# ---------------------------------------------------------------- S8, S9 full results of the other two cohorts
-for num, tab, cap in (
-        (8, "main_hdc_ext", r"HDC-ext (Hungary, Switzerland, VA; $n=615$): all models, mean over 100 outer folds"),
-        (9, "main_cvd", r"CVD ($n=68{,}576$): all models, mean over 10 outer folds. The SVM and the primal QSVM "
-                        r"give no probabilities at this size, so their Brier score is not available")):
-    out.append(r"\section*{Table S%d. %s}" % (num, cap))
-    out.append(r"Same layout as Table~5 of the manuscript (CHD). Balanced accuracy shows the corrected 95\% CI; "
-               r"fit time is the median CPU time of the final fit per fold.")
-    out.append(r"\begin{center}\scriptsize\input{tables/%s.tex}\end{center}" % tab)
+# ---------------------------------------------------------------- S8 kernel diagnostics per map
+dg = pd.read_csv(os.path.join(T, "diagnostics.csv"))
+dg["dataset"] = dg["dataset"].replace({"cvd_n2000_s0": "cvd"})
+sel = pd.read_csv(os.path.join(T, "diagnostics_vs_performance.csv"))
+sel = sel[sel.family == "QSVM"][["dataset", "map", "lambda", "balanced_accuracy"]]
+m = sel.merge(dg, left_on=["dataset", "map", "lambda"], right_on=["dataset", "model", "bandwidth"], how="left")
+out.append(r"""\section*{Table S8. Kernel diagnostics per feature map}
+Each map at the bandwidth $\lambda$ most often selected for the QSVM in the main analysis, on stratified training splits of each cohort (up to 1,500 records; CVD: 2,000-record subsample), as described in the Methods. KTA: centred kernel-target alignment; $d_{\mathrm{eff}}$: participation-ratio effective dimension of the spectrum; $\lambda_1$ share: fraction of the spectrum in the largest eigenvalue; $\log_{10}\kappa$: condition number of the Gram matrix (values near 12 mean the matrix is numerically rank-deficient); $\bar k$ and $\sigma^2_k$: mean and variance of the off-diagonal kernel values (concentration); $g$: geometric difference from an RBF kernel; KL: expressibility (divergence from Haar; lower is more expressive); MW: Meyer--Wallach entanglement; BA: balanced accuracy of the QSVM in the main analysis.
+{\scriptsize
+\begin{longtable}{llrrrrrrrrrrr}
+\toprule Cohort & Map & $\lambda$ & KTA & $d_{\mathrm{eff}}$ & $\lambda_1$ share & $\log_{10}\kappa$ & $\bar k$ & $\sigma^2_k$ & $g$ & KL & MW & BA \\ \midrule\endhead""")
+order = ["RX", "Pauli-Z", "Hadamard", "Strongly Entangling", "VQE", "Angle Encoding"]
+for ds in ("chd", "hdc_ext", "cvd"):
+    for mp in order:
+        r = m[(m.dataset == ds) & (m["map"] == mp)]
+        if r.empty or pd.isna(r.iloc[0]["kta"]):
+            continue
+        r = r.iloc[0]
+        out.append(f"{DS[ds]} & {esc(mp)} & {r['lambda']:g} & {r['kta']:.3f} & {r['eff_dim_participation']:.2f} & "
+                   f"{r['top1_frac']:.2f} & {np.log10(r['condition_number']):.1f} & {r['offdiag_mean']:.3f} & "
+                   f"{r['offdiag_var']:.4f} & {r['geometric_difference_vs_rbf']:.2f} & {r['expressibility_kl']:.0f} & "
+                   f"{r['meyer_wallach']:.3f} & {100*r['balanced_accuracy']:.1f} \\\\")
+    out.append(r"\midrule")
+out[-1] = r"\bottomrule" + "\n" + r"\end{longtable}}"
 
 out.append(r"\end{document}")
 open(os.path.join(MS, "supplementary.tex"), "w", encoding="utf-8", newline="\n").write("\n".join(out) + "\n")

@@ -88,7 +88,7 @@ def latex_main(s: pd.DataFrame, ds: str) -> str:
     s = s.sort_values(["o", "model"])
     best_cl = s[s.family == "Classical"][PRIMARY].max()
     lines = [r"\begin{tabular}{lccccccc}", r"\toprule",
-             r"Model & Bal. acc. [95\% CI] & AUC & Sens. & Spec. & MCC & Brier & Fit (s) \\", r"\midrule"]
+             r"Model & Balanced accuracy [95\% CI] & AUC-ROC & Sensitivity & Specificity & MCC & Brier score & Fit time (s) \\", r"\midrule"]
     last = None
     for _, r in s.iterrows():
         if last is not None and r["family"] != last:
@@ -98,12 +98,17 @@ def latex_main(s: pd.DataFrame, ds: str) -> str:
         if r["family"] in ("QSVM", "VQC", "QGPC") and r[PRIMARY] > best_cl:
             bal = r"\textbf{" + bal + "}"
         brier = "--" if pd.isna(r["brier"]) else f"{r['brier']:.3f}"
-        name = r["model"].replace("Strongly Entangling", "Str. Ent.").replace("Angle Encoding", "Angle Enc.")
+        name = r["model"]
         name = name.replace("VQE", "ZZ (VQE)")
         lines.append(f"{name} & {bal} & {r['auc']:.3f} & {r['sensitivity']:.3f} & {r['specificity']:.3f} & "
-                     f"{r['mcc']:.3f} & {brier} & {r['fit_s_per_fold']:.1f} \\\\")
+                     f"{r['mcc']:.3f} & {brier} & {fit_s(r['fit_s_per_fold'])} \\\\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     return "\n".join(lines)
+
+
+def fit_s(x):
+    """Fit time: two decimals below 10 s so sub-second fits do not print as 0.0."""
+    return f"{x:.2f}" if x < 10 else f"{x:.1f}"
 
 
 def latex_comparisons(c: pd.DataFrame) -> str:

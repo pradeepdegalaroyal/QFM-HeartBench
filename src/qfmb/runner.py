@@ -25,15 +25,11 @@ import numpy as np
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 RUNS = os.environ.get("QFMB_RUNS", os.path.join(ROOT, "runs"))
-# 48h, not 30 min: node11 on this cluster has been observed with a system
-# clock ~30h behind the other nodes (confirmed via `ssh node11 date`), and
-# claim() compares a lock's heartbeat mtime (stamped by the owning node's own
-# clock) against _server_now() (stamped by whichever node calls claim()). A
-# short threshold would let a correctly-clocked node "steal" a lock that a
-# skewed node is still actively heartbeating, wasting CPU on duplicate work
-# (harmless to correctness -- results are idempotent -- but wasteful). The
-# cost of 48h is that a lock orphaned by a genuinely killed job waits longer
-# before being retried; acceptable given the multi-day run.
+# A lock counts as stale after 48 h without a heartbeat. The long threshold
+# tolerates compute nodes whose clocks disagree: claim() compares a lock's
+# heartbeat time (written by the owning node) with the time seen by the node
+# that tries to claim it. Results are idempotent, so a duplicate claim only
+# wastes CPU time; it cannot change a result.
 STALE_SECONDS = 172800
 MAX_ATTEMPTS = 3
 
@@ -153,7 +149,7 @@ def save_result(task, summary: Dict[str, Any], arrays: Optional[Dict[str, np.nda
         tmp = npz + f".tmp.{os.getpid()}.npz"
         np.savez_compressed(tmp, **arrays)
         os.replace(tmp, npz)
-    # light summary for the dashboard
+    # light per-task summary
     light = {"id": task["id"], "suite": task["suite"], "label": task.get("label", task["id"]),
              "dataset": task.get("dataset"), "group": task.get("group"), "finished": time.time(),
              "seconds": meta.get("seconds"), "host": meta.get("host")}
@@ -226,5 +222,5 @@ def worker_loop(tasks: List[Dict[str, Any]], deadline: Optional[float] = None, l
             try:
                 on_done()
             except Exception:
-                log("dashboard update failed:\n" + traceback.format_exc())
+                log("on_done callback failed:\n" + traceback.format_exc())
     return n_done

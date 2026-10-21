@@ -212,7 +212,7 @@ def fig_diagnostics():
 def fig_training():
     c = pd.read_csv(os.path.join(T, "vqc_loss_curves.csv"))
     o = pd.read_csv(os.path.join(T, "vqc_training.csv"))
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 2.5))
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.9), gridspec_kw={"width_ratios": [1, 1.15]})
     ax = axes[0]
     for m in MAP_ORDER:
         d = c[(c.dataset == "hdc_ext") & (c.variant == "spsa") & (c.label == f"VQC-{m}")].sort_values("iter")
@@ -222,7 +222,7 @@ def fig_training():
     ax.set_xlabel("SPSA iteration")
     ax.set_ylabel("Training cross-entropy")
     ax.set_title("(a) HDC-ext, mean ± SD over 10 seeds × 5 folds", loc="left")
-    ax.legend(fontsize=6, ncol=2, loc="upper right")
+    ax.legend(fontsize=6.5, ncol=2, loc="upper center", bbox_to_anchor=(0.5, -0.2), frameon=False)
     ax = axes[1]
     var_lab = {"spsa": "SPSA", "spsa-init-pi": "SPSA, init U(−π, π)", "cobyla": "COBYLA",
                "adam-ps": "Adam, parameter shift"}
@@ -231,16 +231,20 @@ def fig_training():
     for i, (v, lab) in enumerate(var_lab.items()):
         d = o[o.variant == v].groupby("label")["bal"].mean()
         vals = [d.get(f"VQC-{m}", np.nan) for m in MAP_ORDER]
-        ax.bar(x + (i - 1.5) * w, vals, w * 0.9, color=["#2a78d6", "#eb6834", "#1baf7a", "#eda100"][i], label=lab)
+        bars = ax.bar(x + (i - 1.5) * w, vals, w * 0.9, color=["#2a78d6", "#eb6834", "#1baf7a", "#eda100"][i], label=lab)
+        for b_, v_ in zip(bars, vals):      # value printed vertically just above the top of each bar
+            if not np.isnan(v_):
+                ax.text(b_.get_x() + b_.get_width() / 2, v_ + 0.015, f"{v_:.2f}", rotation=90, ha="center",
+                        va="bottom", fontsize=6, color=INK2)
     ax.set_xticks(x)
-    ax.set_xticklabels([MAP_LAB[m].replace("Strongly Entangling", "Str. Ent.").replace("Angle Encoding", "Angle Enc.")
-                        for m in MAP_ORDER], fontsize=6)
+    ax.set_xticklabels([MAP_LAB[m].replace("Strongly Entangling", "Strongly\nEntangling")
+                        .replace("Angle Encoding", "Angle\nEncoding") for m in MAP_ORDER], fontsize=6.5)
     ax.axhline(0.5, color=INK2, lw=0.8, ls="--")
-    ax.set_ylim(0, 1.22)
+    ax.set_ylim(0, 1.0)
     ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax.set_ylabel("Balanced accuracy")
-    ax.set_title("(b) Optimiser and initialisation", loc="left")
-    ax.legend(fontsize=6, ncol=2, loc="upper center")
+    ax.set_title("(b) Optimizer and initialization", loc="left")
+    ax.legend(fontsize=6.5, ncol=2, loc="upper center", bbox_to_anchor=(0.5, -0.2), frameon=False)
     ax.grid(axis="x", visible=False)
     fig.tight_layout()
     save(fig, "fig_vqc_training")
