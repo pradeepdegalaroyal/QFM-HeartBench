@@ -55,7 +55,7 @@ The raw data are the public OpenML datasets 194, 43672, and 45547, cached in `da
 | Figures 2–7 | `python analysis/figures.py results figs` |
 | Cohort and circuit tables | `python analysis/tables_design.py <out_dir>` |
 | Numbers in the text (LaTeX macros) and the compact comparison table | `python analysis/write_latex_macros.py results <out_dir>` |
-| Supplementary Tables S1–S8 | `python analysis/write_supplementary.py results <out_dir>` |
+| Supplementary Tables S1–S7 and the kernel-diagnostics table | `python analysis/write_supplementary.py results <out_dir>` |
 
 ## Re-run the experiments
 

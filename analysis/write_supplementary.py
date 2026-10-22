@@ -41,7 +41,7 @@ out = [r"""\documentclass[10pt,a4paper]{article}
 c = pd.read_csv(os.path.join(T, "comparisons.csv"))
 c = c.sort_values(["dataset", "reference_type", "mean_diff"], ascending=[True, False, False])
 out.append(r"""\section*{Table S1. All pre-specified comparisons}
-Every quantum configuration against the strongest classical model on six components and against its paradigm-matched classical model (QSVM--SVM, QGPC--GPC, VQC--MLP). $\Delta$: quantum minus classical (pp) with corrected 95\% CI; $d_z$: standardized effect size; $p_{\mathrm{corr}}$: corrected resampled $t$ test; Holm and BH adjust over all comparisons; $p_{\mathrm{W}}$: Wilcoxon signed-rank test (treats folds as independent); $p_{\mathrm{naive}}$: ordinary paired $t$ test, which ignores the overlap of training folds (shown for reference).
+Every quantum configuration against the strongest classical model on six components and against its paradigm-matched classical model (QSVM--SVM, QGPC--GPC, VQC--MLP). $\Delta$: quantum minus classical (pp) with corrected 95\% CI; $d_z$: standardized effect size; $p_{\mathrm{corr}}$: corrected resampled $t$ test; Holm and BH adjust over all comparisons; $p_{\mathrm{W}}$: Wilcoxon signed-rank test (treats folds as independent); $p_{\mathrm{naive}}$: ordinary paired $t$ test, which ignores the overlap of training folds (shown for reference). A $p$ value below 0.0005 is shown as $<0.001$, and $d_z$ is rounded to two decimals, so $0.00$ means no difference.
 {\scriptsize
 \begin{longtable}{lllrrrrrrr}
 \toprule
@@ -147,17 +147,15 @@ for lab in sorted(mode.label.unique()):
     out.append(f"{esc(lab)} & " + " & ".join(cells) + r" \\")
 out.append(r"\bottomrule" + "\n" + r"\end{longtable}}")
 
-# ---------------------------------------------------------------- S8 kernel diagnostics per map
+# ---------------------------------------------------------------- kernel diagnostics: table of the paper (not the supplement)
 dg = pd.read_csv(os.path.join(T, "diagnostics.csv"))
 dg["dataset"] = dg["dataset"].replace({"cvd_n2000_s0": "cvd"})
 sel = pd.read_csv(os.path.join(T, "diagnostics_vs_performance.csv"))
 sel = sel[sel.family == "QSVM"][["dataset", "map", "lambda", "balanced_accuracy"]]
 m = sel.merge(dg, left_on=["dataset", "map", "lambda"], right_on=["dataset", "model", "bandwidth"], how="left")
-out.append(r"""\section*{Table S8. Kernel diagnostics per feature map}
-Each map at the bandwidth $\lambda$ most often selected for the QSVM in the main analysis, on stratified training splits of each cohort (up to 1,500 records; CVD: 2,000-record subsample), as described in the Methods. KTA: centred kernel-target alignment; $d_{\mathrm{eff}}$: participation-ratio effective dimension of the spectrum; $\lambda_1$ share: fraction of the spectrum in the largest eigenvalue; $\log_{10}\kappa$: condition number of the Gram matrix (values near 12 mean the matrix is numerically rank-deficient); $\bar k$ and $\sigma^2_k$: mean and variance of the off-diagonal kernel values (concentration); $g$: geometric difference from an RBF kernel; KL: expressibility (divergence from Haar; lower is more expressive); MW: Meyer--Wallach entanglement; BA: balanced accuracy of the QSVM in the main analysis.
-{\scriptsize
-\begin{longtable}{llrrrrrrrrrrr}
-\toprule Cohort & Map & $\lambda$ & KTA & $d_{\mathrm{eff}}$ & $\lambda_1$ share & $\log_{10}\kappa$ & $\bar k$ & $\sigma^2_k$ & $g$ & KL & MW & BA \\ \midrule\endhead""")
+rows = [r"\begin{tabular}{llrrrrrrrrrrr}", r"\toprule",
+        r"Cohort & Map & $\lambda$ & KTA & $d_{\mathrm{eff}}$ & $\lambda_1$ share & $\log_{10}\kappa$ & $\bar k$ & $\sigma^2_k$ & $g$ & KL & MW & BA \\",
+        r"\midrule"]
 order = ["RX", "Pauli-Z", "Hadamard", "Strongly Entangling", "VQE", "Angle Encoding"]
 for ds in ("chd", "hdc_ext", "cvd"):
     for mp in order:
@@ -165,12 +163,15 @@ for ds in ("chd", "hdc_ext", "cvd"):
         if r.empty or pd.isna(r.iloc[0]["kta"]):
             continue
         r = r.iloc[0]
-        out.append(f"{DS[ds]} & {esc(mp)} & {r['lambda']:g} & {r['kta']:.3f} & {r['eff_dim_participation']:.2f} & "
-                   f"{r['top1_frac']:.2f} & {np.log10(r['condition_number']):.1f} & {r['offdiag_mean']:.3f} & "
-                   f"{r['offdiag_var']:.4f} & {r['geometric_difference_vs_rbf']:.2f} & {r['expressibility_kl']:.0f} & "
-                   f"{r['meyer_wallach']:.3f} & {100*r['balanced_accuracy']:.1f} \\\\")
-    out.append(r"\midrule")
-out[-1] = r"\bottomrule" + "\n" + r"\end{longtable}}"
+        rows.append(f"{DS[ds]} & {esc(mp)} & {r['lambda']:g} & {r['kta']:.3f} & {r['eff_dim_participation']:.2f} & "
+                    f"{r['top1_frac']:.2f} & {np.log10(r['condition_number']):.1f} & {r['offdiag_mean']:.3f} & "
+                    f"{r['offdiag_var']:.4f} & {r['geometric_difference_vs_rbf']:.2f} & {r['expressibility_kl']:.0f} & "
+                    f"{r['meyer_wallach']:.3f} & {100*r['balanced_accuracy']:.1f} \\\\")
+    rows.append(r"\midrule")
+rows[-1] = r"\bottomrule"
+rows.append(r"\end{tabular}")
+os.makedirs(os.path.join(MS, "tables"), exist_ok=True)
+open(os.path.join(MS, "tables", "diagnostics.tex"), "w", encoding="utf-8", newline="\n").write("\n".join(rows) + "\n")
 
 out.append(r"\end{document}")
 open(os.path.join(MS, "supplementary.tex"), "w", encoding="utf-8", newline="\n").write("\n".join(out) + "\n")

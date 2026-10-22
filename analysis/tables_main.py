@@ -97,7 +97,7 @@ def latex_main(s: pd.DataFrame, ds: str) -> str:
         bal = fmt_ci(r, PRIMARY)
         if r["family"] in ("QSVM", "VQC", "QGPC") and r[PRIMARY] > best_cl:
             bal = r"\textbf{" + bal + "}"
-        brier = "--" if pd.isna(r["brier"]) else f"{r['brier']:.3f}"
+        brier = "n/a" if pd.isna(r["brier"]) else f"{r['brier']:.3f}"
         name = r["model"]
         name = name.replace("VQE", "ZZ (VQE)")
         lines.append(f"{name} & {bal} & {r['auc']:.3f} & {r['sensitivity']:.3f} & {r['specificity']:.3f} & "
@@ -106,9 +106,14 @@ def latex_main(s: pd.DataFrame, ds: str) -> str:
     return "\n".join(lines)
 
 
+def pfmt(x):
+    """p-value without rounded zeros."""
+    return "<0.001" if x < 0.0005 else f"{x:.3f}"
+
+
 def fit_s(x):
     """Fit time: two decimals below 10 s so sub-second fits do not print as 0.0."""
-    return f"{x:.2f}" if x < 10 else f"{x:.1f}"
+    return "<0.01" if x < 0.005 else (f"{x:.2f}" if x < 10 else f"{x:.1f}")
 
 
 def latex_comparisons(c: pd.DataFrame) -> str:
@@ -118,7 +123,7 @@ def latex_comparisons(c: pd.DataFrame) -> str:
     for _, r in c.sort_values(["dataset", "reference_type", "mean_diff"], ascending=[True, False, False]).iterrows():
         lines.append(f"{r['dataset']} & {r['model']} vs.\\ {r['reference']} & "
                      f"{100*r['mean_diff']:+.1f} [{100*r['ci_low']:+.1f}, {100*r['ci_high']:+.1f}] & {r['d_z']:.2f} & "
-                     f"{r['p']:.3f} & {r['p_holm_global']:.3f} & {r['p_bh_global']:.3f} & {r['p_wilcoxon']:.3f} \\\\")
+                     f"{pfmt(r['p'])} & {pfmt(r['p_holm_global'])} & {pfmt(r['p_bh_global'])} & {pfmt(r['p_wilcoxon'])} \\\\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     return "\n".join(lines)
 

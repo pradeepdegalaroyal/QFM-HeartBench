@@ -3,6 +3,11 @@
 Usage: python analysis/write_latex_macros.py <results_dir> <manuscript_dir>
 """
 import json
+
+
+def pf(x):
+    return "<0.001" if x < 0.0005 else f"{x:.3f}"
+
 import os
 import re
 import shutil
@@ -212,7 +217,7 @@ for ds in ("chd", "hdc_ext", "cvd"):
     for r in rows:
         lines.append(f"{dsl[ds] if first else ''} & {r['model'].replace('VQE', 'ZZ (VQE)')} vs.\\ {r['reference']} & "
                      f"{100 * r['mean_diff']:+.1f} [{100 * r['ci_low']:+.1f}, {100 * r['ci_high']:+.1f}] & "
-                     f"{r['p']:.3f} & {r['p_holm_global']:.3f} & {r['p_wilcoxon']:.3g} \\\\")
+                     f"{pf(r['p'])} & {pf(r['p_holm_global'])} & {r['p_wilcoxon']:.3g} \\\\")
         first = False
     lines.append(r"\midrule" if ds != "cvd" else r"\bottomrule")
 lines.append(r"\end{tabular}")
