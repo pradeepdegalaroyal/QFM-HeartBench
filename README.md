@@ -73,15 +73,15 @@ MIT (see `LICENSE`). Anyone may use, copy, and modify the code if the license no
 
 ## Citation
 
-If you use this code or the result tables, please cite the article:
+If you use this code or the result tables, please cite it:
 
 ```bibtex
-@article{chenchupradeep2026qfmheartbench,
-  title   = {Quantum Feature Map Benchmarking for Clinical Heart Disease Classification: Circuit Paradigm Analysis of QSVM, VQC, and Quantum Gaussian Process Classifier},
-  author  = {Chenchupradeep, Degala and Abdul, Ashu and Upadhayaya, Niraj},
-  journal = {Array},
-  year    = {2026},
-  note    = {Code: https://github.com/pradeepdegalaroyal/QFM-HeartBench}
+@misc{chenchupradeep2026qfmheartbench,
+  title        = {{QFM-HeartBench}: Quantum Feature Map Benchmarking for Clinical Heart Disease Classification},
+  author       = {Chenchupradeep, Degala and Abdul, Ashu and Upadhayaya, Niraj},
+  year         = {2026},
+  howpublished = {GitHub repository},
+  url          = {https://github.com/pradeepdegalaroyal/QFM-HeartBench}
 }
 ```
 
