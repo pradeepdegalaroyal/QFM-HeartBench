@@ -69,4 +69,20 @@ QFMB_RUNS=runs python analysis/analyze_all.py results   # rebuild results/tables
 
 ## License
 
-MIT (see `LICENSE`).
+MIT (see `LICENSE`). Anyone may use, copy, and modify the code if the license notice stays with it.
+
+## Citation
+
+If you use this code or the result tables, please cite the article:
+
+```bibtex
+@article{chenchupradeep2026qfmheartbench,
+  title   = {Quantum Feature Map Benchmarking for Clinical Heart Disease Classification: Circuit Paradigm Analysis of QSVM, VQC, and Quantum Gaussian Process Classifier},
+  author  = {Chenchupradeep, Degala and Abdul, Ashu and Upadhayaya, Niraj},
+  journal = {Array},
+  year    = {2026},
+  note    = {Code: https://github.com/pradeepdegalaroyal/QFM-HeartBench}
+}
+```
+
+GitHub also reads `CITATION.cff` and offers a "Cite this repository" button.
