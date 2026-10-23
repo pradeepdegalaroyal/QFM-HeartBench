@@ -34,10 +34,12 @@ def expressibility_kl(K: np.ndarray, n_qubits: int, bins: int = 75) -> float:
     p, _ = np.histogram(F, edges)
     p = p / p.sum()
     N = 2 ** n_qubits
-    cdf = 1 - (1 - edges) ** (N - 1)                 # Haar fidelity CDF
-    q = np.diff(cdf)
+    # Haar bin mass (1-a)^(N-1) - (1-b)^(N-1), in log space: 1 - (1-F)^(N-1) rounds to 1 above F ~ 0.45
+    with np.errstate(divide="ignore"):
+        la, lb = (N - 1) * np.log1p(-edges[:-1]), (N - 1) * np.log1p(-edges[1:])
+    log_q = la + np.log1p(-np.exp(lb - la))
     m = p > 0
-    return float(np.sum(p[m] * np.log(p[m] / np.maximum(q[m], 1e-300))))
+    return float(np.sum(p[m] * (np.log(p[m]) - log_q[m])))
 
 
 def meyer_wallach(psi: np.ndarray, n: int) -> float:

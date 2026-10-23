@@ -287,7 +287,8 @@ def diagnostics(main_summary: pd.DataFrame):
                 sel = bwsel[(bwsel.dataset == mds) & (bwsel.label == lab)]
                 if sel.empty:
                     continue
-                lam = float(sel.sort_values("count").iloc[-1]["hp_bandwidth"])
+                # most often selected; ties go to the larger bandwidth
+                lam = float(sel.sort_values(["count", "hp_bandwidth"], ascending=False).iloc[0]["hp_bandwidth"])
                 row = agg[(agg.dataset == dds) & (agg.model == m) & (np.isclose(agg.bandwidth.astype(float), lam))]
                 perf = main_summary[(main_summary.dataset == mds) & (main_summary.model == lab)]
                 if row.empty or perf.empty:

@@ -4,7 +4,7 @@
   Frank, PAKDD 2004): Var = (1/J + n_test/n_train) s^2 over the J = r*k paired
   fold differences, df = J - 1. The naive paired t-test ignores the overlap of
   training sets and is anti-conservative.
-* Wilcoxon signed-rank test on the same differences (exact p-values reported).
+* Wilcoxon signed-rank test on the same differences (normal approximation for many folds, exact for few).
 * Holm-Bonferroni (FWER) and Benjamini-Hochberg (FDR) adjustment over the
   complete, pre-specified family of comparisons.
 * Effect sizes: mean difference with corrected 95 % CI; Cohen's d_z (corrected).

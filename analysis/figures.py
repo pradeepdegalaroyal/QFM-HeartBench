@@ -29,15 +29,15 @@ INK, INK2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 FAM_COL = {"QSVM": "#2a78d6", "VQC": "#eb6834", "QGPC": "#1baf7a", "Classical": "#6b6a66",
            "Classical (all features)": "#b5b4ae"}
 MAP_ORDER = ["RX", "Pauli-Z", "Hadamard", "Strongly Entangling", "VQE", "Angle Encoding"]
-MAP_COL = dict(zip(MAP_ORDER, ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300"]))
+MAP_COL = dict(zip(MAP_ORDER, ["#2a78d6", "#eb6834", "#7b4fc9", "#eda100", "#e87ba4", "#008300"]))
 MAP_LAB = {m: ("ZZ (VQE)" if m == "VQE" else m) for m in MAP_ORDER}
 DS_LAB = {"chd": "CHD (n = 303)", "hdc_ext": "HDC-ext (n = 615)", "cvd": "CVD (n = 68,576)"}
 P = "balanced_accuracy"
 
 plt.rcParams.update({
     "font.family": "sans-serif", "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
-    "font.size": 8, "axes.titlesize": 9, "axes.labelsize": 8, "xtick.labelsize": 7, "ytick.labelsize": 7,
-    "legend.fontsize": 7, "axes.edgecolor": GRID, "axes.linewidth": 0.6, "axes.labelcolor": INK2,
+    "font.size": 8, "axes.titlesize": 9, "axes.labelsize": 8, "xtick.labelsize": 7.5, "ytick.labelsize": 7.5,
+    "legend.fontsize": 7.5, "axes.edgecolor": GRID, "axes.linewidth": 0.6, "axes.labelcolor": INK2,
     "xtick.color": INK2, "ytick.color": INK2, "text.color": INK, "axes.titlecolor": INK,
     "axes.grid": True, "grid.color": GRID, "grid.linewidth": 0.5, "grid.linestyle": "-",
     "axes.spines.top": False, "axes.spines.right": False, "legend.frameon": False,
@@ -60,7 +60,7 @@ def short(m):
 # ---------------------------------------------------------------- Fig. 2 main comparison
 def fig_main():
     s = pd.read_csv(os.path.join(T, "main_summary.csv"))
-    fig, axes = plt.subplots(1, 3, figsize=(7.2, 5.6), sharey=False)
+    fig, axes = plt.subplots(1, 3, figsize=(7.2, 6.2), sharey=False)
     for ax, ds in zip(axes, ["chd", "hdc_ext", "cvd"]):
         g = s[s.dataset == ds].sort_values(P)
         y = np.arange(len(g))
@@ -73,7 +73,7 @@ def fig_main():
             ax.plot(r[P], yi, "o", ms=4.5, mfc="white" if hollow else c, mec=c if hollow else "white",
                     mew=1.0 if hollow else 0.8, zorder=3)
         ax.set_yticks(y)
-        ax.set_yticklabels([short(m) for m in g.model], fontsize=6)
+        ax.set_yticklabels([short(m) for m in g.model], fontsize=7.2)
         ax.set_title(DS_LAB[ds], loc="left", fontweight="bold")
         ax.set_xlabel("Balanced accuracy (95% CI)")
         ax.grid(axis="y", visible=False)
@@ -107,7 +107,7 @@ def fig_samplesize():
     save(fig, "fig_sample_size")
 
 
-# ---------------------------------------------------------------- Fig. 4 noise
+# ---------------------------------------------------------------- Fig. 5 noise
 def fig_noise():
     q = pd.read_csv(os.path.join(T, "noise_kernel_quality.csv"))
     n = pd.read_csv(os.path.join(T, "noise.csv"))
@@ -135,13 +135,14 @@ def fig_noise():
     for ax in axes:
         ax.set_xticks(range(4))
         ax.set_xticklabels(lvl)
+        ax.set_xlabel("Noise level")
     h, l = axes[0].get_legend_handles_labels()
     fig.tight_layout()
-    fig.legend(h, l, loc="lower center", ncol=6, bbox_to_anchor=(0.5, -0.1), fontsize=7)
+    fig.legend(h, l, loc="lower center", ncol=6, bbox_to_anchor=(0.5, -0.16), fontsize=7.5)
     save(fig, "fig_noise")
 
 
-# ---------------------------------------------------------------- Fig. 5 sensitivity + bandwidth
+# ---------------------------------------------------------------- Fig. 4 sensitivity + bandwidth
 def fig_sensitivity():
     s = pd.read_csv(os.path.join(T, "sensitivity_family.csv"), dtype={"value": str})
     b = pd.read_csv(os.path.join(T, "ablation_bandwidth_family.csv"))
@@ -181,7 +182,7 @@ def fig_sensitivity():
 def fig_diagnostics():
     d = pd.read_csv(os.path.join(T, "diagnostics_vs_performance.csv"))
     gv = pd.read_csv(os.path.join(T, "gradvar.csv"))
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.3))
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 4.0))
     ax = axes[0]
     mk = {"chd": "o", "hdc_ext": "s", "cvd": "^"}
     for _, r in d.iterrows():
@@ -199,7 +200,8 @@ def fig_diagnostics():
           for ds, m in mk.items()]
     h += [Line2D([], [], marker="o", ls="", ms=5, mfc=INK2, mec=INK2, label="QSVM (filled)"),
           Line2D([], [], marker="o", ls="", ms=5, mfc="white", mec=INK2, label="QGPC (open)")]
-    ax.legend(handles=h, loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=4, fontsize=6, frameon=False)
+    ax.legend(handles=h, loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=3, fontsize=7.2, frameon=False,
+              columnspacing=1.0, handletextpad=0.3)
     ax = axes[1]
     for L, mk_ in ((2, "o"), (8, "s")):
         g = gv[gv.layers == L].groupby("n_qubits")[["var_local_first", "var_global_first"]].mean()
@@ -212,12 +214,12 @@ def fig_diagnostics():
             label=r"Local $\langle Z_0\rangle$, ZZ (VQE) map, depth 2")
     ax.set_yscale("log")
     ax.axvline(6, color=INK2, lw=0.8)
-    ax.text(6.15, 2.0, "6 qubits (this study)", fontsize=6, color=INK2, va="top")
+    ax.text(6.15, 2.0, "6 qubits (this study)", fontsize=7.2, color=INK2, va="top")
     ax.set_ylim(1e-8, 3)
     ax.set_xlabel("Number of qubits")
     ax.set_ylabel(r"Var$[\partial\langle O\rangle/\partial\theta_1]$")
     ax.set_title("(b) Gradient variance", loc="left")
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2, fontsize=6, frameon=False)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=1, fontsize=7.2, frameon=False)
     fig.tight_layout()
     save(fig, "fig_diagnostics")
 
@@ -237,7 +239,7 @@ def fig_training():
     ax.set_ylabel("Training cross-entropy")
     ax.set_title("(a) HDC-ext, mean ± SD over 10 seeds × 5 folds", loc="left")
     ax.set_ylim(0.3, 1.6)
-    ax.legend(fontsize=6.5, ncol=2, loc="upper center", bbox_to_anchor=(0.5, -0.2), frameon=False)
+    ax.legend(fontsize=7.5, ncol=2, loc="upper center", bbox_to_anchor=(0.5, -0.2), frameon=False)
     ax = axes[1]
     var_lab = {"spsa": "SPSA", "spsa-init-pi": "SPSA, init U(−π, π)", "cobyla": "COBYLA",
                "adam-ps": "Adam, parameter shift"}
@@ -254,16 +256,16 @@ def fig_training():
             if not np.isnan(v_):
                 ax.text(b_.get_x() + b_.get_width() / 2, v_ + (0 if np.isnan(e_) else e_) + 0.015, f"{v_:.2f}",
                         rotation=90, ha="center",
-                        va="bottom", fontsize=6, color=INK2)
+                        va="bottom", fontsize=7, color=INK2)
     ax.set_xticks(x)
     ax.set_xticklabels([MAP_LAB[m].replace("Strongly Entangling", "Strongly\nEntangling")
-                        .replace("Angle Encoding", "Angle\nEncoding") for m in MAP_ORDER], fontsize=6.5)
+                        .replace("Angle Encoding", "Angle\nEncoding") for m in MAP_ORDER], fontsize=7.5)
     ax.axhline(0.5, color=INK2, lw=0.8, ls="--")
     ax.set_ylim(0, 1.05)
     ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax.set_ylabel("Balanced accuracy")
     ax.set_title("(b) Optimizer and initialization", loc="left")
-    ax.legend(fontsize=6.5, ncol=2, loc="upper center", bbox_to_anchor=(0.5, -0.2), frameon=False)
+    ax.legend(fontsize=7.5, ncol=2, loc="upper center", bbox_to_anchor=(0.5, -0.2), frameon=False)
     ax.grid(axis="x", visible=False)
     fig.tight_layout()
     save(fig, "fig_vqc_training")

@@ -170,11 +170,14 @@ def run_task(task: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, np.ndarray
         pre = make_preprocessor(ds.numeric, ds.categorical, prep["mode"], prep.get("k", 6), seed)
         fit_idx = tr
         # Exact GPC is O(N^3) with several Cholesky factorizations per restart
-        # (n_restarts_optimizer=2); empirically this is already far too slow
-        # well below 8,000 training rows (one such fold ran >18h), so the cap
-        # is set much lower and the boundary is inclusive.
-        if ms.family == "classical" and ms.name == "GPC" and len(tr) >= 2500:
-            fit_idx = tr[_strat_subsample(ds.y[tr], 2000, seed)]
+        # (n_restarts_optimizer=2): above 8,000 training rows it trains on a
+        # 5,000-row stratified subsample (main CVD). A task may set a lower
+        # cap ("gpc_max_train"); one sample-size task uses 2,000 after a fold
+        # with 8,000 rows ran for more than 18 h.
+        if ms.family == "classical" and ms.name == "GPC":
+            cap = task.get("gpc_max_train") or (5000 if len(tr) > 8000 else None)
+            if cap and len(tr) > cap:
+                fit_idx = tr[_strat_subsample(ds.y[tr], cap, seed)]
         Ztr = pre.fit_transform(ds.X.iloc[fit_idx])
         if task.get("test_dataset"):
             Zte, yte, te_index = pre.transform(ext.X), ext.y, np.arange(len(ext.y))

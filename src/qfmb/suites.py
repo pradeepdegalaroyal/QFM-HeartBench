@@ -114,8 +114,9 @@ def suite_samplesize() -> List[Dict]:
         for s in range(3):
             ds = f"cvd_n{n}_s{s}"
             for label, model, prep in standard_models(include_full=False):
+                extra = {"gpc_max_train": 2000} if (n, s, label) == (10000, 1, "GPC") else {}
                 tasks.append(_task("samplesize", ds, label, model, 0, 5, group=label, variant=f"N{n}",
-                                   tune_subsample=4000 if n >= 5000 else None))
+                                   tune_subsample=4000 if n >= 5000 else None, **extra))
     return tasks
 
 

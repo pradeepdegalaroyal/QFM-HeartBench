@@ -15,7 +15,7 @@ def _qiskit_state(qc, params, values):
 
 
 @pytest.mark.parametrize("name", list(FEATURE_MAPS))
-@pytest.mark.parametrize("n,layers", [(2, 1), (4, 2), (6, 2), (5, 3)])
+@pytest.mark.parametrize("n,layers", [(2, 1), (4, 2), (6, 2), (5, 3), (12, 2), (13, 6)])
 @pytest.mark.parametrize("ent", ENTANGLEMENTS)
 def test_feature_maps_match_qiskit(name, n, layers, ent):
     ops = feature_map(name, n, layers, ent)

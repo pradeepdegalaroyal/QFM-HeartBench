@@ -25,7 +25,7 @@ for nm, lab in [("chd", "CHD (Cleveland)"), ("hdc_ext", "HDC-ext (Hungary, Switz
     var = float(np.sum(pca.named_steps["pca"].explained_variance_ratio_))
     rows.append((lab, len(d.y), int(d.y.sum()), d.X.shape[1], n_enc, int(d.X.isna().sum().sum()), var))
 lines = [r"\begin{tabular}{lrrrrrr}", r"\toprule",
-         r"Cohort & $N$ & Positive & Raw features & Encoded features & Missing cells & Var.\ (6 PCs)$^{a}$ \\",
+         r"Cohort & $n$ & Positive & Raw features & Encoded features & Missing cells & Var.\ (6 PCs)$^{a}$ \\",
          r"\midrule"]
 for lab, n, pos, raw, enc, miss, var in rows:
     lines.append(f"{lab} & {n:,} & {pos:,} ({100 * pos / n:.1f}\\%) & {raw} & {enc} & {miss} & {100 * var:.1f}\\% \\\\")
@@ -40,14 +40,14 @@ with open(os.path.join(OUT, "audit.txt"), "w", newline="\n") as f:
 from qiskit import transpile  # noqa: E402
 from qiskit.transpiler import CouplingMap  # noqa: E402
 
-desc = {"RX": (r"$R_X(x_i)\,R_Z(x_i)$", "CNOT, linear"),
-        "Pauli-Z": (r"$H\,R_Z(x_i)\,H$", "CZ, linear"),
-        "Hadamard": (r"$R_Y(x_i)\,H$", "CNOT, linear"),
-        "Strongly Entangling": (r"$R_X(x_i)\,R_Y(x_i)$", r"CRX$(x_i)$, linear"),
-        "VQE": (r"$H\,P(2x_i)$", r"CX--$P(2(\pi-x_i)(\pi-x_j))$--CX, full"),
-        "Angle Encoding": (r"$R_Y(x_i)\,R_Z(x_i)$", "CZ, linear")}
+desc = {"RX": (r"$R_X(\phi_i)\,R_Z(\phi_i)$", "CNOT, linear"),
+        "Pauli-Z": (r"$H\,R_Z(\phi_i)\,H$", "CZ, linear"),
+        "Hadamard": (r"$R_Y(\phi_i)\,H$", "CNOT, linear"),
+        "Strongly Entangling": (r"$R_X(\phi_i)\,R_Y(\phi_i)$", r"CRX$(\phi_i)$, linear"),
+        "VQE": (r"$H\,P(2\phi_i)$", r"CX--$P(2(\pi-\phi_i)(\pi-\phi_j))$--CX, full"),
+        "Angle Encoding": (r"$R_Y(\phi_i)\,R_Z(\phi_i)$", "CZ, linear")}
 lines = [r"\begin{tabular}{lllrrrrr}", r"\toprule",
-         r"Feature map & Encoding block & Entangler & Gates & 2q gates & Depth & CX$^{b}$ & Depth$^{b}$ \\",
+         r"Feature map & Encoding block & Entangler & Gates & 2q gates & Depth & CX$^{a}$ & Depth$^{a}$ \\",
          r"\midrule"]
 for name in FEATURE_MAPS:
     ops = feature_map(name, 6, 2)

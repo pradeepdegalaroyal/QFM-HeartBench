@@ -35,7 +35,13 @@ def pct(x, nd=1):
 
 def put(key, val):
     assert re.fullmatch(r"[A-Za-z]+", key), key
+    if re.fullmatch(r"-[0-9][0-9.,]*", val):  # typographic minus in text and math
+        val = r"\ensuremath{-}" + val[1:]
     M[key] = val
+
+
+def signed(x):
+    return f"{x:+.1f}".replace("-", r"\ensuremath{-}")
 
 
 DSN = {"chd": "Chd", "hdc_ext": "Hdc", "cvd": "Cvd"}
@@ -118,7 +124,8 @@ for sh in ("64", "1024", "8192"):
 for it in ("25", "200", "800"):
     w = {"25": "TwentyFive", "200": "TwoHundred", "800": "EightHundred"}[it]
     put(f"sensSpsa{w}", pct(sv["spsa"]["VQC"][it]))
-put("shotsNegMassSixtyFour", "21"); put("shotsNegMassEightK", "3")  # see sensitivity_map.csv / psd check in RESULTS.md
+nm = K["sens"]["shots_mean_neg_mass"]
+put("shotsNegMassSixtyFour", pct(nm["64"], 0)); put("shotsNegMassEightK", pct(nm["8192"], 0))
 # ---------------------------------------------------------------- noise
 n = K["noise"]
 for fam in ("QSVM", "QGPC", "VQC"):
@@ -138,10 +145,10 @@ put("noiseDropZzVqc", pct(n["drop_shots_to_high"]["VQC|VQE"]))
 d = K["diag"]
 for ds, tag in (("chd", "Chd"), ("hdc_ext", "Hdc"), ("cvd", "Cvd")):
     c = d["spearman_within_cohort"][ds]
-    put(f"diagKta{tag}", f"{c['kta'][0]:.2f}"); put(f"diagKtaP{tag}", f"{c['kta'][1]:.3f}")
-    put(f"diagGd{tag}", f"{c['geometric_difference'][0]:.2f}"); put(f"diagGdP{tag}", f"{c['geometric_difference'][1]:.3f}")
-    put(f"diagMw{tag}", f"{c['meyer_wallach'][0]:.2f}"); put(f"diagMwP{tag}", f"{c['meyer_wallach'][1]:.3f}")
-    put(f"diagEx{tag}", f"{c['expressibility_kl'][0]:.2f}"); put(f"diagExP{tag}", f"{c['expressibility_kl'][1]:.3f}")
+    put(f"diagKta{tag}", f"{c['kta'][0]:.2f}"); put(f"diagKtaP{tag}", pf(c['kta'][1]))
+    put(f"diagGd{tag}", f"{c['geometric_difference'][0]:.2f}"); put(f"diagGdP{tag}", pf(c['geometric_difference'][1]))
+    put(f"diagMw{tag}", f"{c['meyer_wallach'][0]:.2f}"); put(f"diagMwP{tag}", pf(c['meyer_wallach'][1]))
+    put(f"diagEx{tag}", f"{c['expressibility_kl'][0]:.2f}"); put(f"diagExP{tag}", pf(c['expressibility_kl'][1]))
 put("diagRxPzAlignChd", f"{d['rx_pz_alignment']['chd|0.1']:.2f}")
 put("diagRxPzAlignHdc", f"{d['rx_pz_alignment']['hdc_ext|0.1']:.2f}")
 put("diagRxPzAlignChdLarge", f"{d['rx_pz_alignment']['chd|2.0']:.2f}")
@@ -158,6 +165,13 @@ gv12 = g["global_L2"]["12"]
 mant, exp = f"{gv12:.1e}".split("e")
 put("gvGlobalTwelve", f"{mant}\\times10^{{{int(exp)}}}")
 put("gvLocalEightSix", f"{g['local_L8']['6']:.3f}")
+gvm = pd.read_csv(os.path.join(T, "gradvar.csv"))
+gvm = gvm[gvm.layers == 2].pivot_table(index="n_qubits", columns="feature_map", values="var_local_first")
+put("gvLocalZzTwo", f"{gvm.loc[2, 'VQE']:.2f}"); put("gvLocalZzSix", f"{gvm.loc[6, 'VQE']:.3f}")
+mant, exp = f"{gvm.loc[12, 'VQE']:.1e}".split("e")
+put("gvLocalZzTwelve", f"{mant}\\times10^{{{int(exp)}}}")
+oth = gvm.drop(columns="VQE")
+put("gvLocalOtherMin", f"{oth.values.min():.2f}"); put("gvLocalOtherMax", f"{oth.values.max():.2f}")
 t = K["train"]
 for v, tag in (("spsa", "Spsa"), ("spsa-init-pi", "SpsaPi"), ("cobyla", "Cobyla"), ("adam-ps", "Adam")):
     put(f"trainBal{tag}", pct(t["by_optimizer"][v]["bal"]))
@@ -165,7 +179,7 @@ for v, tag in (("spsa", "Spsa"), ("spsa-init-pi", "SpsaPi"), ("cobyla", "Cobyla"
 for m, tag in (("VQC-RX", "Rx"), ("VQC-Hadamard", "Had"), ("VQC-VQE", "Zz"), ("VQC-Angle Encoding", "Ae"),
                ("VQC-Strongly Entangling", "Se"), ("VQC-Pauli-Z", "Pz")):
     put(f"trainMap{tag}", pct(t["by_map_spsa"][m]))
-put("trainLossSd", f"{max(t['final_loss_sd_across_seeds'].values()):.3f}")
+put("trainLossSd", f"{max(t['final_loss_sd_across_seeds'].values()):.2f}")
 # ---------------------------------------------------------------- clinical
 cl = K["clinical"]
 lv = list(cl["qgpc_latentvar_error_auc"].values())
@@ -216,8 +230,8 @@ for ds in ("chd", "hdc_ext", "cvd"):
     first = True
     for r in rows:
         lines.append(f"{dsl[ds] if first else ''} & {r['model'].replace('VQE', 'ZZ (VQE)')} vs.\\ {r['reference']} & "
-                     f"{100 * r['mean_diff']:+.1f} [{100 * r['ci_low']:+.1f}, {100 * r['ci_high']:+.1f}] & "
-                     f"{pf(r['p'])} & {pf(r['p_holm_global'])} & {r['p_wilcoxon']:.3g} \\\\")
+                     f"{signed(100 * r['mean_diff'])} [{signed(100 * r['ci_low'])}, {signed(100 * r['ci_high'])}] & "
+                     f"{pf(r['p'])} & {pf(r['p_holm_global'])} & {pf(r['p_wilcoxon'])} \\\\")
         first = False
     lines.append(r"\midrule" if ds != "cvd" else r"\bottomrule")
 lines.append(r"\end{tabular}")

@@ -20,7 +20,7 @@ def esc(x):
 
 
 def pv(x):
-    return "<0.001" if x < 0.001 else f"{x:.3f}"
+    return "<0.001" if x < 0.0005 else f"{x:.3f}"
 
 
 out = [r"""\documentclass[10pt,a4paper]{article}
@@ -30,18 +30,19 @@ out = [r"""\documentclass[10pt,a4paper]{article}
 \renewcommand{\thetable}{S\arabic{table}}
 \usepackage[raggedright]{titlesec}
 \setlength{\emergencystretch}{3em}
-\title{Supplementary material\\[4pt]\large Quantum Feature Map Benchmarking for Clinical Heart Disease Classification}
+\title{Supplementary material\\[4pt]\large Quantum Feature Map Benchmarking for Clinical Heart Disease Classification\\[2pt]\normalsize Manuscript ARRAY-D-26-02445}
+\author{Degala Chenchupradeep, Ashu Abdul, and Niraj Upadhayaya\\SRM University-AP, Amaravati, India}
 \date{}
 \begin{document}
 \maketitle
-\noindent All tables are generated automatically from the result files of the 7,180 experiment tasks. The code repository also contains the per-fold confusion matrices of every model (\texttt{confusion\_per\_fold.csv}), the per-fold metrics, and every table as CSV. Balanced accuracy is in percent unless stated otherwise; pp means percentage points.
+\noindent All tables are generated automatically from the result files of the 7,180 experiment tasks. The code repository also contains the per-fold confusion matrices of every model (\texttt{confusion\_per\_fold.csv}) and every table as CSV. Balanced accuracy is in percent, and pp means percentage points. CHD: Cleveland Heart Disease. HDC-ext: Hungarian, Swiss and VA data. CVD: Cardiovascular Disease cohort. QSVM: quantum support vector machine. QGPC: quantum Gaussian process classifier. VQC: variational quantum classifier. ZZ (VQE): ZZ feature map of the Variational Quantum Eigensolver. CI: confidence interval. BH: Benjamini--Hochberg. LR: logistic regression. SVM: support vector machine. MLP: multilayer perceptron. GPC: Gaussian process classifier. RF: random forest. XGB: XGBoost. LGBM: LightGBM.
 """]
 
 # ---------------------------------------------------------------- S1 all comparisons
 c = pd.read_csv(os.path.join(T, "comparisons.csv"))
 c = c.sort_values(["dataset", "reference_type", "mean_diff"], ascending=[True, False, False])
 out.append(r"""\section*{Table S1. All pre-specified comparisons}
-Every quantum configuration against the strongest classical model on six components and against its paradigm-matched classical model (QSVM--SVM, QGPC--GPC, VQC--MLP). $\Delta$: quantum minus classical (pp) with corrected 95\% CI; $d_z$: standardized effect size; $p_{\mathrm{corr}}$: corrected resampled $t$ test; Holm and BH adjust over all comparisons; $p_{\mathrm{W}}$: Wilcoxon signed-rank test (treats folds as independent); $p_{\mathrm{naive}}$: ordinary paired $t$ test, which ignores the overlap of training folds (shown for reference). A $p$ value below 0.0005 is shown as $<0.001$, and $d_z$ is rounded to two decimals, so $0.00$ means no difference.
+Every quantum configuration against the strongest classical model on six components and against its paradigm-matched classical model (QSVM--SVM, QGPC--GPC, VQC--MLP). $\Delta$: quantum minus classical (pp) with corrected 95\% CI. $d_z$: effect size with the corrected variance. $p_{\mathrm{corr}}$: corrected resampled $t$ test. Holm and BH adjust over all comparisons. $p_{\mathrm{W}}$: Wilcoxon signed-rank test, which treats folds as independent. $p_{\mathrm{naive}}$: ordinary paired $t$ test, which ignores the overlap of training folds and is shown for reference only. A $p$ value below 0.0005 is shown as $<0.001$, and $d_z$ is rounded to two decimals, so $0.00$ means no difference.
 {\scriptsize
 \begin{longtable}{lllrrrrrrr}
 \toprule
@@ -69,7 +70,7 @@ out.append(r"\bottomrule" + "\n" + r"\end{longtable}}")
 e = pd.read_csv(os.path.join(T, "external_validation.csv"))
 piv = e.pivot_table(index=["label", "family"], columns="dataset", values=[P, "sensitivity", "specificity"]).reset_index()
 out.append(r"""\section*{Table S3. External validation}
-Models trained on one cohort with the 11 shared features and tested on the other (mean over 5 model seeds; one train--test split per direction, so no significance test).
+Models trained on one cohort with the 11 shared features and tested on the other (mean over 5 model seeds). Each direction has one train--test split, so no significance test applies.
 {\scriptsize
 \begin{longtable}{llrrrrrr}
 \toprule
@@ -87,7 +88,7 @@ out.append(r"\bottomrule" + "\n" + r"\end{longtable}}")
 n = pd.read_csv(os.path.join(T, "noise.csv"))
 lv = ["shots", "low", "medium", "high"]
 out.append(r"""\section*{Table S4. Simulated hardware noise per feature map}
-Balanced accuracy (\%), mean over CHD and HDC-ext and 5 folds. CX: CNOT gates of the transpiled fidelity circuit (linear coupling); $k(x,x)$: mean self-overlap of the noisy kernel at medium noise.
+Balanced accuracy (\%), mean over CHD and HDC-ext and 5 folds. CX: CNOT gates of the transpiled fidelity circuit (linear coupling). $k(x,x)$: mean self-overlap of the noisy kernel at medium noise, which applies to the kernel models only.
 {\scriptsize
 \begin{longtable}{llrrrrrr}
 \toprule Family & Map & Shots only & Low & Medium & High & CX & $k(x,x)$ \\ \midrule\endhead""")
@@ -118,7 +119,7 @@ out.append(r"\bottomrule" + "\n" + r"\end{longtable}}")
 bw = pd.read_csv(os.path.join(T, "ablation_bandwidth_map.csv")).set_index("label")
 cols = [c_ for c_ in bw.columns]
 out.append(r"""\section*{Table S6. Balanced accuracy (\%) with a fixed bandwidth $\lambda$}
-Mean over the four ablation cohorts; the main analysis tunes $\lambda$ by nested cross-validation instead.
+Mean over the four ablation cohorts. The main analysis tunes $\lambda$ by nested cross-validation instead.
 {\scriptsize
 \begin{longtable}{l""" + "r" * len(cols) + r"""}
 \toprule Model & """ + " & ".join(f"$\\lambda={float(x):g}$" for x in cols) + r""" \\ \midrule\endhead""")
@@ -128,10 +129,10 @@ out.append(r"\bottomrule" + "\n" + r"\end{longtable}}")
 
 # ---------------------------------------------------------------- S7 bandwidth selected in the main analysis
 hs = pd.read_csv(os.path.join(T, "bandwidth_selection.csv"))
-mode = hs.loc[hs.groupby(["dataset", "label"])["count"].idxmax()]
+mode = hs.sort_values(["count", "hp_bandwidth"], ascending=False).groupby(["dataset", "label"]).head(1)  # ties: larger
 tot = hs.groupby(["dataset", "label"])["count"].sum()
 out.append(r"""\section*{Table S7. Bandwidth selected by nested cross-validation in the main analysis}
-Most frequently selected $\lambda$ and its share of the outer folds.
+Most frequently selected $\lambda$ and its share of the outer folds. When two values are selected equally often, the table shows the larger one.
 {\scriptsize
 \begin{longtable}{lrrrrrr}
 \toprule Model & \multicolumn{2}{c}{CHD} & \multicolumn{2}{c}{HDC-ext} & \multicolumn{2}{c}{CVD} \\ & $\lambda$ & share & $\lambda$ & share & $\lambda$ & share \\ \midrule\endhead""")
@@ -154,7 +155,7 @@ sel = pd.read_csv(os.path.join(T, "diagnostics_vs_performance.csv"))
 sel = sel[sel.family == "QSVM"][["dataset", "map", "lambda", "balanced_accuracy"]]
 m = sel.merge(dg, left_on=["dataset", "map", "lambda"], right_on=["dataset", "model", "bandwidth"], how="left")
 rows = [r"\begin{tabular}{llrrrrrrrrrrr}", r"\toprule",
-        r"Cohort & Map & $\lambda$ & KTA & $d_{\mathrm{eff}}$ & $\lambda_1$ share & $\log_{10}\kappa$ & $\bar k$ & $\sigma^2_k$ & $g$ & KL & MW & BA \\",
+        r"Cohort & Map & $\lambda$ & KTA & $d_{\mathrm{eff}}$ & $\mu_1$ share & $\log_{10}\kappa$ & $\bar k$ & $\sigma^2_k$ & $g$ & KL & MW & BA (\%) \\",
         r"\midrule"]
 order = ["RX", "Pauli-Z", "Hadamard", "Strongly Entangling", "VQE", "Angle Encoding"]
 for ds in ("chd", "hdc_ext", "cvd"):
