@@ -62,7 +62,7 @@ for name in FEATURE_MAPS:
 ans, k = two_local(6, 2)
 st = circuit_stats(ans, 6)
 lines.append(f"TwoLocal ansatz (VQC) & $R_Y(\\theta)\\,R_Z(\\theta)$ & CZ, linear & {st['gates']} & "
-             f"{st['two_qubit_gates']} & {st['depth']} & -- & -- \\\\")
+             f"{st['two_qubit_gates']} & {st['depth']} & NA & NA \\\\")
 lines += [r"\bottomrule", r"\end{tabular}"]
 with open(os.path.join(OUT, "circuits.tex"), "w", newline="\n") as f:
     f.write("\n".join(lines) + "\n")

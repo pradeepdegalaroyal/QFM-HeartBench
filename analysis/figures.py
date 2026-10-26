@@ -101,7 +101,7 @@ def fig_samplesize():
     ax.set_xscale("log")
     ax.set_xticks([100, 200, 500, 1000, 2000, 5000, 10000])
     ax.set_xticklabels(["100", "200", "500", "1K", "2K", "5K", "10K"])
-    ax.set_xlabel("CVD subsample size N (records, 5-fold CV)")
+    ax.set_xlabel("Records in the CVD subsample")
     ax.set_ylabel("Balanced accuracy (best model)")
     ax.legend(loc="lower right", ncol=2)
     save(fig, "fig_sample_size")
