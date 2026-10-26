@@ -76,9 +76,9 @@ MIT (see `LICENSE`). Anyone may use, copy, and modify the code if the license no
 If you use this code or the result tables, please cite it:
 
 ```bibtex
-@misc{chenchupradeep2026qfmheartbench,
+@misc{qfmheartbench2026,
   title        = {{QFM-HeartBench}: Quantum Feature Map Benchmarking for Clinical Heart Disease Classification},
-  author       = {Chenchupradeep, Degala and Abdul, Ashu and Upadhayaya, Niraj},
+  author       = {{QFM-HeartBench}},
   year         = {2026},
   howpublished = {GitHub repository},
   url          = {https://github.com/pradeepdegalaroyal/QFM-HeartBench}

@@ -4,12 +4,4 @@ title: "QFM-HeartBench: Quantum Feature Map Benchmarking for Clinical Heart Dise
 version: 1.0.0
 license: MIT
 authors:
-  - family-names: Chenchupradeep
-    given-names: Degala
-    affiliation: SRM University-AP
-  - family-names: Abdul
-    given-names: Ashu
-    affiliation: SRM University-AP
-  - family-names: Upadhayaya
-    given-names: Niraj
-    affiliation: SRM University-AP
+  - name: "QFM-HeartBench"
