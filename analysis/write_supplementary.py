@@ -31,18 +31,18 @@ out = [r"""\documentclass[10pt,a4paper]{article}
 \usepackage[raggedright]{titlesec}
 \setlength{\emergencystretch}{3em}
 \title{Supplementary material\\[4pt]\large Quantum Feature Map Benchmarking for Clinical Heart Disease Classification\\[2pt]\normalsize Manuscript ARRAY-D-26-02445}
-\author{Degala Chenchupradeep, Ashu Abdul, and Niraj Upadhayaya\\SRM University-AP, Amaravati, India}
+\author{Degala Chenchupradeep, Ashu Abdul and Niraj Upadhayaya\\SRM University-AP, Amaravati, India}
 \date{}
 \begin{document}
 \maketitle
-\noindent All tables are generated automatically from the result files of the 7,180 experiment tasks. The code repository also contains the per-fold confusion matrices of every model (\texttt{confusion\_per\_fold.csv}) and every table as CSV. Balanced accuracy is in percent, and pp means percentage points. CHD: Cleveland Heart Disease. HDC-ext: Hungarian, Swiss and VA data. CVD: Cardiovascular Disease cohort. QSVM: quantum support vector machine. QGPC: quantum Gaussian process classifier. VQC: variational quantum classifier. ZZ (VQE): ZZ feature map of the Variational Quantum Eigensolver. CI: confidence interval. BH: Benjamini--Hochberg. LR: logistic regression. SVM: support vector machine. MLP: multilayer perceptron. GPC: Gaussian process classifier. RF: random forest. XGB: XGBoost. LGBM: LightGBM.
+\noindent All tables are taken directly from the result files of the 7,180 experiment tasks. The code repository also contains the per-fold confusion matrices of every model (\texttt{confusion\_per\_fold.csv}) and every table as CSV. Balanced accuracy is in percent. The unit pp means percentage points. CHD: Cleveland Heart Disease. HDC-ext: Hungarian, Swiss and VA data. CVD: Cardiovascular Disease cohort. QSVM: quantum support vector machine. QGPC: quantum Gaussian process classifier. VQC: variational quantum classifier. ZZ (VQE): ZZ feature map of the Variational Quantum Eigensolver. CI: confidence interval. BH: Benjamini--Hochberg. LR: logistic regression. SVM: support vector machine. MLP: multilayer perceptron. GPC: Gaussian process classifier. RF: random forest. XGB: XGBoost. LGBM: LightGBM.
 """]
 
 # ---------------------------------------------------------------- S1 all comparisons
 c = pd.read_csv(os.path.join(T, "comparisons.csv"))
 c = c.sort_values(["dataset", "reference_type", "mean_diff"], ascending=[True, False, False])
 out.append(r"""\section*{Table S1. All pre-specified comparisons}
-Every quantum configuration against the strongest classical model on six components and against its paradigm-matched classical model (QSVM--SVM, QGPC--GPC, VQC--MLP). $\Delta$: quantum minus classical (pp) with corrected 95\% CI. $d_z$: effect size with the corrected variance. $p_{\mathrm{corr}}$: corrected resampled $t$ test. Holm and BH adjust over all comparisons. $p_{\mathrm{W}}$: Wilcoxon signed-rank test, which treats folds as independent. $p_{\mathrm{naive}}$: ordinary paired $t$ test, which ignores the overlap of training folds and is shown for reference only. A $p$ value below 0.0005 is shown as $<0.001$, and $d_z$ is rounded to two decimals, so $0.00$ means no difference.
+Every quantum configuration against the strongest classical model on six components and against its paradigm-matched classical model (QSVM--SVM, QGPC--GPC, VQC--MLP). $\Delta$: quantum minus classical (pp) with corrected 95\% CI. $d_z$: effect size with the corrected variance. $p_{\mathrm{corr}}$: corrected resampled $t$ test. Holm and BH adjust over all comparisons. $p_{\mathrm{W}}$: Wilcoxon signed-rank test, which treats folds as independent. $p_{\mathrm{naive}}$: ordinary paired $t$ test, which ignores the overlap of training folds and is shown for reference only. A $p$ value below 0.0005 is shown as $<0.001$. The effect size $d_z$ is rounded to two decimals, so $0.00$ means no difference.
 {\scriptsize
 \begin{longtable}{lllrrrrrrr}
 \toprule
